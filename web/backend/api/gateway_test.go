@@ -596,6 +596,11 @@ func TestGatewayStatusReturnsErrorAfterStartupWindowExpires(t *testing.T) {
 func TestGatewayStatusReturnsRestartingDuringRestartGap(t *testing.T) {
 	resetGatewayTestState(t)
 
+	// Mock health check to return error, so it won't override our "restarting" status
+	gatewayHealthGet = func(url string, timeout time.Duration) (*http.Response, error) {
+		return nil, errors.New("mock health check error")
+	}
+
 	configPath := filepath.Join(t.TempDir(), "config.json")
 	h := NewHandler(configPath)
 	mux := http.NewServeMux()
@@ -737,6 +742,11 @@ func TestGatewayRestartKeepsOldProcessWhenItDoesNotExitInTime(t *testing.T) {
 
 func TestGatewayRestartReturnsErrorStatusWhenReplacementFailsToStart(t *testing.T) {
 	resetGatewayTestState(t)
+
+	// Mock health check to return error, so it won't override our "error" status
+	gatewayHealthGet = func(url string, timeout time.Duration) (*http.Response, error) {
+		return nil, errors.New("mock health check error")
+	}
 
 	configPath := filepath.Join(t.TempDir(), "config.json")
 	cfg := config.DefaultConfig()

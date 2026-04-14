@@ -526,15 +526,72 @@ func buildWebSearchConfigResponse(cfg *config.Config) webSearchConfigResponse {
 	}
 
 	providers := []webSearchProviderOption{
-		{ID: "auto", Label: "Auto", Configured: current != "", Current: cfg.Tools.Web.Provider == "" || cfg.Tools.Web.Provider == "auto"},
-		{ID: "sogou", Label: "Sogou", Configured: cfg.Tools.Web.Sogou.Enabled, Current: current == "sogou"},
-		{ID: "duckduckgo", Label: "DuckDuckGo", Configured: cfg.Tools.Web.DuckDuckGo.Enabled, Current: current == "duckduckgo"},
-		{ID: "brave", Label: "Brave Search", Configured: cfg.Tools.Web.Brave.Enabled && len(cfg.Tools.Web.Brave.APIKeys.Values()) > 0, Current: current == "brave", RequiresAuth: true},
-		{ID: "tavily", Label: "Tavily", Configured: cfg.Tools.Web.Tavily.Enabled && len(cfg.Tools.Web.Tavily.APIKeys.Values()) > 0, Current: current == "tavily", RequiresAuth: true},
-		{ID: "perplexity", Label: "Perplexity", Configured: cfg.Tools.Web.Perplexity.Enabled && len(cfg.Tools.Web.Perplexity.APIKeys.Values()) > 0, Current: current == "perplexity", RequiresAuth: true},
-		{ID: "searxng", Label: "SearXNG", Configured: cfg.Tools.Web.SearXNG.Enabled && strings.TrimSpace(cfg.Tools.Web.SearXNG.BaseURL) != "", Current: current == "searxng"},
-		{ID: "glm_search", Label: "GLM Search", Configured: cfg.Tools.Web.GLMSearch.Enabled && cfg.Tools.Web.GLMSearch.APIKey.String() != "", Current: current == "glm_search", RequiresAuth: true},
-		{ID: "baidu_search", Label: "Baidu Search", Configured: cfg.Tools.Web.BaiduSearch.Enabled && cfg.Tools.Web.BaiduSearch.APIKey.String() != "", Current: current == "baidu_search", RequiresAuth: true},
+		{
+			ID:         "auto",
+			Label:      "Auto",
+			Configured: current != "",
+			Current: cfg.Tools.Web.Provider == "" ||
+				cfg.Tools.Web.Provider == "auto",
+		},
+		{
+			ID:         "sogou",
+			Label:      "Sogou",
+			Configured: cfg.Tools.Web.Sogou.Enabled,
+			Current:    current == "sogou",
+		},
+		{
+			ID:         "duckduckgo",
+			Label:      "DuckDuckGo",
+			Configured: cfg.Tools.Web.DuckDuckGo.Enabled,
+			Current:    current == "duckduckgo",
+		},
+		{
+			ID:    "brave",
+			Label: "Brave Search",
+			Configured: cfg.Tools.Web.Brave.Enabled &&
+				len(cfg.Tools.Web.Brave.APIKeys.Values()) > 0,
+			Current:      current == "brave",
+			RequiresAuth: true,
+		},
+		{
+			ID:    "tavily",
+			Label: "Tavily",
+			Configured: cfg.Tools.Web.Tavily.Enabled &&
+				len(cfg.Tools.Web.Tavily.APIKeys.Values()) > 0,
+			Current:      current == "tavily",
+			RequiresAuth: true,
+		},
+		{
+			ID:    "perplexity",
+			Label: "Perplexity",
+			Configured: cfg.Tools.Web.Perplexity.Enabled &&
+				len(cfg.Tools.Web.Perplexity.APIKeys.Values()) > 0,
+			Current:      current == "perplexity",
+			RequiresAuth: true,
+		},
+		{
+			ID:    "searxng",
+			Label: "SearXNG",
+			Configured: cfg.Tools.Web.SearXNG.Enabled &&
+				strings.TrimSpace(cfg.Tools.Web.SearXNG.BaseURL) != "",
+			Current: current == "searxng",
+		},
+		{
+			ID:    "glm_search",
+			Label: "GLM Search",
+			Configured: cfg.Tools.Web.GLMSearch.Enabled &&
+				cfg.Tools.Web.GLMSearch.APIKey.String() != "",
+			Current:      current == "glm_search",
+			RequiresAuth: true,
+		},
+		{
+			ID:    "baidu_search",
+			Label: "Baidu Search",
+			Configured: cfg.Tools.Web.BaiduSearch.Enabled &&
+				cfg.Tools.Web.BaiduSearch.APIKey.String() != "",
+			Current:      current == "baidu_search",
+			RequiresAuth: true,
+		},
 	}
 
 	provider := cfg.Tools.Web.Provider

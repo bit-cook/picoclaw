@@ -46,8 +46,12 @@ var (
 	reDDGLink = regexp.MustCompile(
 		`<a[^>]*class="[^"]*result__a[^"]*"[^>]*href="([^"]+)"[^>]*>([\s\S]*?)</a>`,
 	)
-	reDDGSnippet   = regexp.MustCompile(`<a class="result__snippet[^"]*".*?>([\s\S]*?)</a>`)
-	reSogouTitle   = regexp.MustCompile(`<a\s+class=resultLink\s+href="([^"]+)"[^>]*id="sogou_vr_\d+_\d+"[^>]*>\s*(.*?)\s*</a>`)
+	reDDGSnippet = regexp.MustCompile(
+		`<a class="result__snippet[^"]*".*?>([\s\S]*?)</a>`,
+	)
+	reSogouTitle = regexp.MustCompile(
+		`<a\s+class=resultLink\s+href="([^"]+)"[^>]*id="sogou_vr_\d+_\d+"[^>]*>\s*(.*?)\s*</a>`,
+	)
 	reSogouSnippet = regexp.MustCompile(`<div class="clamp\d*">\s*(.*?)\s*</div>`)
 	reSogouRealURL = regexp.MustCompile(`url=([^&]+)`)
 )

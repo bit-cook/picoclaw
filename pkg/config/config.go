@@ -996,7 +996,9 @@ func LoadConfig(path string) (*Config, error) {
 		Version int `json:"version"`
 	}
 	if e := json.Unmarshal(data, &versionInfo); e != nil {
-		return nil, fmt.Errorf("failed to detect config version: %w", e)
+		e = wrapJSONError(data, e, "config.json")
+		logger.ErrorCF("config", formatDiagnosticLogMessage("Malformed config file", e), map[string]any{"path": path})
+		return nil, e
 	}
 	if len(data) <= 10 {
 		logger.Warn(fmt.Sprintf("content is [%s]", string(data)))
@@ -1011,10 +1013,23 @@ func LoadConfig(path string) (*Config, error) {
 			"config migrate start",
 			map[string]any{"from": versionInfo.Version, "to": CurrentVersion},
 		)
+		if err = validateLegacyConfigDiagnostics(data); err != nil {
+			logger.ErrorCF(
+				"config",
+				formatDiagnosticLogMessage("Failed to load config", err),
+				map[string]any{"path": path},
+			)
+			return nil, err
+		}
 
 		var m map[string]any
 		m, err = loadConfigMap(path)
 		if err != nil {
+			logger.ErrorCF(
+				"config",
+				formatDiagnosticLogMessage("Failed to load config", err),
+				map[string]any{"path": path},
+			)
 			return nil, err
 		}
 
@@ -1056,10 +1071,23 @@ func LoadConfig(path string) (*Config, error) {
 			"config migrate start",
 			map[string]any{"from": versionInfo.Version, "to": CurrentVersion},
 		)
+		if err = validateLegacyConfigDiagnostics(data); err != nil {
+			logger.ErrorCF(
+				"config",
+				formatDiagnosticLogMessage("Failed to load config", err),
+				map[string]any{"path": path},
+			)
+			return nil, err
+		}
 
 		var m map[string]any
 		m, err = loadConfigMap(path)
 		if err != nil {
+			logger.ErrorCF(
+				"config",
+				formatDiagnosticLogMessage("Failed to load config", err),
+				map[string]any{"path": path},
+			)
 			return nil, err
 		}
 
@@ -1101,9 +1129,22 @@ func LoadConfig(path string) (*Config, error) {
 			"config migrate start",
 			map[string]any{"from": versionInfo.Version, "to": CurrentVersion},
 		)
+		if err = validateLegacyConfigDiagnostics(data); err != nil {
+			logger.ErrorCF(
+				"config",
+				formatDiagnosticLogMessage("Failed to load config", err),
+				map[string]any{"path": path},
+			)
+			return nil, err
+		}
 		var m map[string]any
 		m, err = loadConfigMap(path)
 		if err != nil {
+			logger.ErrorCF(
+				"config",
+				formatDiagnosticLogMessage("Failed to load config", err),
+				map[string]any{"path": path},
+			)
 			return nil, err
 		}
 		migrateErr := migrateV2ToV3(m)
@@ -1138,6 +1179,11 @@ func LoadConfig(path string) (*Config, error) {
 		// Current version
 		cfg, err = loadConfig(data)
 		if err != nil {
+			logger.ErrorCF(
+				"config",
+				formatDiagnosticLogMessage("Failed to load config", err),
+				map[string]any{"path": path},
+			)
 			return nil, err
 		}
 		// Load security configuration

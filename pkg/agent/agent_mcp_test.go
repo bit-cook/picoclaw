@@ -172,6 +172,38 @@ func TestToolRegistryIncludesReportsOnlyRegisteredTools(t *testing.T) {
 	}
 }
 
+func TestFilterMCPConfigServersCaseInsensitivePreservesOriginalKeys(t *testing.T) {
+	mcpCfg := config.MCPConfig{
+		Servers: map[string]config.MCPServerConfig{
+			"GitHub":     {Enabled: true},
+			"filesystem": {Enabled: true},
+			"Slack":      {Enabled: true},
+		},
+	}
+	allowed := map[string]struct{}{
+		"github":     {},
+		"FILESYSTEM": {},
+	}
+
+	filtered := filterMCPConfigServers(mcpCfg, allowed)
+
+	if len(filtered.Servers) != 2 {
+		t.Fatalf("filtered.Servers = %v, want 2 entries", filtered.Servers)
+	}
+	if _, ok := filtered.Servers["GitHub"]; !ok {
+		t.Fatal("expected original GitHub config key to be preserved")
+	}
+	if _, ok := filtered.Servers["filesystem"]; !ok {
+		t.Fatal("expected filesystem config key to be preserved")
+	}
+	if _, ok := filtered.Servers["github"]; ok {
+		t.Fatal("did not expect normalized github key to replace original config key")
+	}
+	if _, ok := filtered.Servers["Slack"]; ok {
+		t.Fatal("did not expect unallowed Slack server")
+	}
+}
+
 func TestEnsureMCPInitialized_LoadFailureSetsInitErr(t *testing.T) {
 	al, cfg, _, _, cleanup := newTestAgentLoop(t)
 	defer cleanup()

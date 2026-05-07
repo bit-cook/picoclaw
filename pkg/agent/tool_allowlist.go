@@ -11,6 +11,24 @@ import (
 
 const dynamicMCPToolPrefix = "mcp_"
 
+func normalizeMCPServerName(name string) string {
+	return strings.ToLower(strings.TrimSpace(name))
+}
+
+func normalizedMCPServerNameSet(
+	servers map[string]config.MCPServerConfig,
+) map[string]struct{} {
+	normalized := make(map[string]struct{}, len(servers))
+	for serverName := range servers {
+		name := normalizeMCPServerName(serverName)
+		if name == "" {
+			continue
+		}
+		normalized[name] = struct{}{}
+	}
+	return normalized
+}
+
 func warnOnUnknownAgentToolDeclarations(
 	agentID, workspace string,
 	definition AgentContextDefinition,
@@ -93,13 +111,14 @@ func unknownAgentMCPServerNames(cfg *config.Config, definition AgentContextDefin
 		return nil
 	}
 
+	knownServers := normalizedMCPServerNameSet(cfg.Tools.MCP.Servers)
 	unknown := make(map[string]struct{})
 	for _, raw := range definition.Agent.Frontmatter.MCPServers {
-		name := strings.ToLower(strings.TrimSpace(raw))
+		name := normalizeMCPServerName(raw)
 		if name == "" {
 			continue
 		}
-		if _, ok := cfg.Tools.MCP.Servers[name]; ok {
+		if _, ok := knownServers[name]; ok {
 			continue
 		}
 		unknown[name] = struct{}{}

@@ -317,8 +317,16 @@ func filterMCPConfigServers(
 
 	filtered := mcpCfg
 	filtered.Servers = make(map[string]config.MCPServerConfig)
+	normalizedAllowed := make(map[string]struct{}, len(allowed))
+	for serverName := range allowed {
+		name := normalizeMCPServerName(serverName)
+		if name == "" {
+			continue
+		}
+		normalizedAllowed[name] = struct{}{}
+	}
 	for serverName, serverCfg := range mcpCfg.Servers {
-		if _, ok := allowed[serverName]; ok {
+		if _, ok := normalizedAllowed[normalizeMCPServerName(serverName)]; ok {
 			filtered.Servers[serverName] = serverCfg
 		}
 	}

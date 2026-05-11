@@ -646,6 +646,9 @@ func restartServices(
 	if fms, ok := runningServices.MediaStore.(*media.FileMediaStore); ok {
 		fms.Start()
 	}
+	if runningServices.ChannelManager != nil {
+		runningServices.ChannelManager.SetMediaStore(runningServices.MediaStore)
+	}
 	al.SetMediaStore(runningServices.MediaStore)
 
 	al.SetChannelManager(runningServices.ChannelManager)

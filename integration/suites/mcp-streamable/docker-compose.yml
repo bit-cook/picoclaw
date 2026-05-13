@@ -1,14 +1,9 @@
 services:
   integration-runner:
-    image: golang:1.25-bookworm
     depends_on:
       mcp-streamable-server:
         condition: service_healthy
-    volumes:
-      - .:/src
-    working_dir: /src
     environment:
-      PATH: "/usr/local/go/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
       PICOCLAW_MCP_REAL_SERVER_JSON: >-
         {"enabled":true,"type":"http","url":"http://mcp-streamable-server:8080/mcp"}
       PICOCLAW_MCP_REAL_TOOL_NAME: echo
@@ -18,7 +13,7 @@ services:
 
   mcp-streamable-server:
     build:
-      context: .
+      context: ${INTEGRATION_REPO_ROOT}
       dockerfile: integration/fixtures/mcp-streamable-server/Dockerfile
     environment:
       STREAMABLE_JSON_RESPONSE: "true"

@@ -2,9 +2,9 @@ services:
   integration-runner:
     image: golang:1.25-bookworm
     working_dir: /workspace
-    entrypoint: ["bash", "-lc"]
+    entrypoint: ["bash", "-c"]
     volumes:
-      - .:/workspace
+      - ${INTEGRATION_REPO_ROOT}:/workspace
       - picoclaw-integration-gocache:/go-build-cache
       - picoclaw-integration-gomodcache:/go-mod-cache
     environment:

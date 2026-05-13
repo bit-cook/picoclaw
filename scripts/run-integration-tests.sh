@@ -63,6 +63,7 @@ run_suite() {
     # shellcheck disable=SC1090
     source "$manifest"
     set +a
+    export INTEGRATION_REPO_ROOT="$ROOT_DIR"
 
     : "${TEST_COMMAND:?suite $suite_name must define TEST_COMMAND in $manifest}"
     runner_service="${RUNNER_SERVICE:-integration-runner}"
@@ -91,7 +92,7 @@ run_suite() {
     fi
 
     echo "==> [$suite_name] running: $TEST_COMMAND"
-    # integration-runner already uses `bash -lc` as its entrypoint, so pass the
+    # integration-runner already uses `bash -c` as its entrypoint, so pass the
     # suite command as a single argument for Bash to execute directly.
     docker compose "${compose_args[@]}" run --rm "$runner_service" "$TEST_COMMAND"
   )
